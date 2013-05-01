@@ -3,21 +3,30 @@
 
 import datetime
 import os.path
+import sys
 from subprocess import Popen, PIPE
 
 class penmode:
-	def __init__(self,target):
+	def __init__(self):
+		self.t = None
 		self.dc = {}
-		#Check tools
+		# Settings
+		self.settings()
+		
+		# Check tools
 		self.check_tools()
-		# Inizializzazione oggetto
-		# Target SENZA http://
-		self.t = target
-		if "http://" in self.t:
-    			self.t = self.t[7:]
+		
 		# IP del target da tor-resolve
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
+		
+	def settings(self):
+		host = sys.argv[2]
+		self.t = host
+		if "http://" in host:
+			self.t = host[7:]
+			
+		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
 	def check_tools(self):
 		#Tools
@@ -37,7 +46,8 @@ class penmode:
 		return 'sudo proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'	
 
 	def nmap(self):
-		return 'sudo proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.ip + ' | tee ./' + self.t + self.pendate() + '.txt'
+		p = raw_input("Parameters: ")
+		return 'sudo proxychains nmap ' + p + ' ' + self.ip + ' | tee ./' + self.t + self.pendate() + '.txt'
 
 	def whatweb(self):
 		return 'whatweb -v 127.0.0.1:8080 | tee ./nmap' + self.ip + self.pendate() + '.txt'
