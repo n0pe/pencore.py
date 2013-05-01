@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import os.path
 from subprocess import Popen, PIPE
 
 class penmode:
 	def __init__(self,target):
+		#Check tools
+		self.check_tools()
 		# Inizializzazione oggetto
 		# Target SENZA http://
 		self.t = target
@@ -13,6 +16,18 @@ class penmode:
     			self.t = self.t[7:]
 		# IP del target da tor-resolve
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
+		
+		
+	def check_tools(self):
+		self.dc = {}
+		tools = ['nmap','whatweb']
+		
+		for i in tools:
+			needle = "/usr/bin/"+i
+			if os.path.exists(needle):
+				self.dc[i] = 1
+			else:
+				self.dc[i] = 0
 
 	def pendate(self):
 		# Funzione che rileva la data per i log
