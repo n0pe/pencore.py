@@ -7,6 +7,7 @@ from subprocess import Popen, PIPE
 
 class penmode:
 	def __init__(self,target):
+		self.dc = {}
 		#Check tools
 		self.check_tools()
 		# Inizializzazione oggetto
@@ -19,9 +20,7 @@ class penmode:
 		
 		
 	def check_tools(self):
-		self.dc = {}
 		tools = ['nmap','whatweb']
-		
 		for i in tools:
 			needle = "/usr/bin/"+i
 			if os.path.exists(needle):
