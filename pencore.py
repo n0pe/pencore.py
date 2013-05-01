@@ -20,7 +20,7 @@ class penmode:
 		
 		
 	def check_tools(self):
-		#Toolss
+		#Tools
 		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto']
 		for i in tools:
 			needle = "/usr/bin/"+i
