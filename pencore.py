@@ -20,7 +20,8 @@ class penmode:
 		
 		
 	def check_tools(self):
-		tools = ['nmap','whatweb']
+		#Toolss
+		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto']
 		for i in tools:
 			needle = "/usr/bin/"+i
 			if os.path.exists(needle):
