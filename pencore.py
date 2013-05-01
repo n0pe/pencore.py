@@ -23,7 +23,7 @@ class penmode:
 	def settings(self):
 		host = sys.argv[2]
 		self.t = host
-		if "http://" in host:
+		if self.t[0:7] == "http://":
 			self.t = host[7:]
 			
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
