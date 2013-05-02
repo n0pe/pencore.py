@@ -2,19 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from pencore import *
+from optparse import OptionParser, OptionGroup
 import sys
-
-def usage():
-	print "Usage: ./penmode [tool] -p [parameters] [host]"
-	exit(1)
-
-try:
-	str(sys.argv[1])
-	str(sys.argv[-1])
-except IndexError:
-	usage()
 	
-
 m = globals()['penmode']()
 
 if m.dc.has_key(sys.argv[1]):

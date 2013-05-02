@@ -5,7 +5,12 @@ import datetime
 import os.path
 import sys
 from subprocess import Popen, PIPE
+from urllib2 import urlopen
 
+#Usage
+def usage():
+	print "Usage: ./penmode [tool] -p [parameters] [host]"
+	exit(1)
 
 #Color 
 GREEN = '\033[92m'
@@ -33,14 +38,17 @@ class penmode:
 		#Parameters
 		self.p = None
 		
+		#Log file
+		self.lf = None
+		
 		#Dictionary (the tools)
 		self.dc = {}
 		
-		# Settings
-		self.settings()
-		
 		# Check tools
 		self.check_tools()
+		
+		# Settings
+		self.settings()
 		
 		# IP del target da tor-resolve
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
@@ -48,15 +56,28 @@ class penmode:
 		
 	def settings(self):
 		
-		#Remove http from target
+		#Check for parameters and target
+		try:
+			sys.argv[2]
+			if sys.argv[2] == "-p":
+				self.p = sys.argv[3]
+				
+			elif sys.argv[2] == "-f":
+				self.fl = sys.argv[3]
+				
+			elif sys.argv[2] == "-g":
+				#Start gui
+				print "GUI"
+		except IndexError:
+			next
+				
+		#Check for target
 		self.t = sys.argv[-1]
+		if self.dc.has_key(self.t):
+			usage()
+		
 		if self.t[0:7] == "http://":
 			self.t = sys.argv[-1][7:]
-			
-		#Check for parameters
-		if sys.argv[2] and sys.argv[2] == "-p":
-			if sys.argv[3]:
-				self.p = sys.argv[3]
 			
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
@@ -87,7 +108,7 @@ class penmode:
 		if self.p:
 			return 'sudo proxychains nmap ' + self.p + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 		else:
-			return 'sudo proxychains nmap sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'sudo proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 
 	def whatweb(self):
 		return 'whatweb -v 127.0.0.1:8080 | tee ./nmap' + self.ip + self.pendate() + '.txt'
