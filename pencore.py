@@ -9,6 +9,7 @@ from subprocess import Popen, PIPE
 class penmode:
 	def __init__(self):
 		self.t = None
+		self.p = None
 		self.dc = {}
 		# Settings
 		self.settings()
@@ -21,10 +22,13 @@ class penmode:
 		
 		
 	def settings(self):
-		host = sys.argv[2]
-		self.t = host
+		self.t = sys.argv[-1]
 		if self.t[0:7] == "http://":
-			self.t = host[7:]
+			self.t = sys.argv[-1][7:]
+			
+		if sys.argv[2] and sys.argv[2] == "-p":
+			if sys.argv[3]:
+				self.p = sys.argv[3]
 			
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
@@ -46,8 +50,10 @@ class penmode:
 		return 'sudo proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'	
 
 	def nmap(self):
-		p = raw_input("Parameters: ")
-		return 'sudo proxychains nmap ' + p + ' ' + self.ip + ' | tee ./' + self.t + self.pendate() + '.txt'
+		if self.p:
+			return 'sudo proxychains nmap ' + self.p + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+		else:
+			return 'sudo proxychains nmap sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 
 	def whatweb(self):
 		return 'whatweb -v 127.0.0.1:8080 | tee ./nmap' + self.ip + self.pendate() + '.txt'

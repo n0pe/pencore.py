@@ -3,12 +3,19 @@
 
 from pencore import *
 import sys
+print sys.argv
+
+
+def usage():
+	print "Usage: ./penmode [tool] -p [parameters] [host]"
+	exit(1)
 
 try:
-	sys.argv[2]
+	str(sys.argv[1])
+	str(sys.argv[-1])
 except IndexError:
-	print "Usage: ./penmode [tool] [host]"
-	exit(1)
+	usage()
+	
 
 m = globals()['penmode']()
 
