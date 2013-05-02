@@ -47,10 +47,13 @@ class penmode:
 		
 		
 	def settings(self):
+		
+		#Remove http from target
 		self.t = sys.argv[-1]
 		if self.t[0:7] == "http://":
 			self.t = sys.argv[-1][7:]
 			
+		#Check for parameters
 		if sys.argv[2] and sys.argv[2] == "-p":
 			if sys.argv[3]:
 				self.p = sys.argv[3]
@@ -58,12 +61,13 @@ class penmode:
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
 	def check_tools(self):
+		
 		#Check proxychains and socat
 		if not os.path.exists('/usr/bin/proxychains') or not os.path.exists('/usr/bin/socat'):
 			print red("Please, install "+green("proxychains ")+red("and ")+green("socat."))
 			exit(1)
 		
-		#Tools
+		#Check the tools
 		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto']
 		for i in tools:
 			needle = "/usr/bin/"+i
@@ -105,19 +109,3 @@ class penmode:
 		
 	def nikto(self):
 		return 'nikto -h 127.0.0.1:8080 | tee ./nikto' + self.pendate() + '.txt'
- 
- 
-
-################## FINE CLASSE #################
-
-#################################################
-#    SOLO PER IL DEBUG - CODICE TEMPORANEO      #
-#         SOLO PER ESEMPIO D'UTILIZZO           #
-#################################################
-#def main():
-#	x = penmode("target.it")
-#	print x.nmap()
-#	print ''
-#	print x.slowloris(1000,200)
-#
-#main()
