@@ -3,8 +3,6 @@
 
 from pencore import *
 import sys
-print sys.argv
-
 
 def usage():
 	print "Usage: ./penmode [tool] -p [parameters] [host]"

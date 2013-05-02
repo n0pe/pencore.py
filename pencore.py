@@ -6,10 +6,27 @@ import os.path
 import sys
 from subprocess import Popen, PIPE
 
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+RED = '\033[91m'
+END = '\033[0m'
+
+def green(word):
+	return GREEN + word + END
+
+def yellow(word):
+	return YELLOW + word + END
+
+def red(word):
+	return RED + word + END
+
 class penmode:
 	def __init__(self):
+		#Target
 		self.t = None
+		#Parameters
 		self.p = None
+		#Dictionary (the tools)
 		self.dc = {}
 		# Settings
 		self.settings()
@@ -33,6 +50,11 @@ class penmode:
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
 	def check_tools(self):
+		#Check proxychains and socat
+		if not os.path.exists('/usr/bin/proxychains') or not os.path.exists('/usr/bin/socat'):
+			print red("Please, install "+green("proxychains ")+red("and ")+green("socat."))
+			exit(1)
+		
 		#Tools
 		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto']
 		for i in tools:
