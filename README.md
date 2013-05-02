@@ -1,4 +1,4 @@
 pencore.py
 ==========
 
-In development...
+In development..
