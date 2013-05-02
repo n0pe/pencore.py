@@ -6,6 +6,8 @@ import os.path
 import sys
 from subprocess import Popen, PIPE
 
+
+#Color 
 GREEN = '\033[92m'
 YELLOW = '\033[93m'
 RED = '\033[91m'
@@ -20,14 +22,20 @@ def yellow(word):
 def red(word):
 	return RED + word + END
 
+
+
 class penmode:
 	def __init__(self):
+		
 		#Target
 		self.t = None
+		
 		#Parameters
 		self.p = None
+		
 		#Dictionary (the tools)
 		self.dc = {}
+		
 		# Settings
 		self.settings()
 		
