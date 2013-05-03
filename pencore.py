@@ -21,11 +21,12 @@ import datetime
 import os.path
 import sys
 from subprocess import Popen, PIPE
-from urllib2 import urlopen
+import subprocess
+from optparse import OptionParser, OptionGroup
 
 #Usage
 def usage():
-	print "Usage: ./penmode [tool] -p [parameters] [host]"
+	print "\nUsage: ./penmode [tool] -p [parameters] -t [host]\n"
 	exit(1)
 
 #Color 
@@ -51,47 +52,71 @@ class penmode:
 		#Target
 		self.t = None
 		
-		#Parameters
-		self.p = None
-		
 		#Log file
 		self.lf = None
 		
 		#Dictionary (the tools)
 		self.dc = {}
 		
-		# Check tools
-		self.check_tools()
+		#Parameters
+		self.par = None
 		
-		# Settings
+		#Check for parameters
+		self.get_params()
+		
+		#Settings and configuration
 		self.settings()
 		
-		# IP del target da tor-resolve
+		#Check tools
+		self.check_tools()
+		
+		
+		#IP del target da tor-resolve
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
+	
+	def get_params(self):
+
+
+		parser = OptionParser()
+		
+		#Options
+		parser.add_option( "-t", "--target", action="store", dest="target", default=False, help="Target address." );
+		parser.add_option( "-p", "--params", action="store", dest="params", default=False, help="Additional parameters." );
+		parser.add_option( "-o", "--output", action="store", dest="output", default=None, help="Output file" );
+		parser.add_option( "-g", "--gui", action="store_true", dest="gui", default=None, help="Start GUI interface" );
+		
+		(o,args) = parser.parse_args()
+		
+		
+		#Check for Target
+		if not o.target:
+			print red("Specific target!")
+			exit(1)
+		else:
+			self.t = o.target
+			
+		#Check for parameters
+		if o.params and o.params != None:
+			print o.params
+			c = o.params.split(',')
+			for a in c:
+				self.par = ' '.join(c)
+			
+			
+		#Check for LogFile
+		elif o.output:
+			self.fl = o.output
+			
+			
+		#Check for GUI
+		elif o.gui:
+			#START GUI HERE
+			next
 		
 	def settings(self):
 		
-		#Check for parameters and target
-		try:
-			sys.argv[2]
-			if sys.argv[2] == "-p":
-				self.p = sys.argv[3]
-				
-			elif sys.argv[2] == "-f":
-				self.fl = sys.argv[3]
-				
-			elif sys.argv[2] == "-g":
-				#Start gui
-				print "GUI"
-		except IndexError:
-			next
-				
-		#Check for target
-		self.t = sys.argv[-1]
-		if self.dc.has_key(self.t):
-			usage()
-		
+		#Adjust target
 		if self.t[0:7] == "http://":
 			self.t = sys.argv[-1][7:]
 			
@@ -112,6 +137,19 @@ class penmode:
 				self.dc[i] = 1
 			else:
 				self.dc[i] = 0
+		
+	#Run tools		
+	def run_command(self, command):
+		
+		test = Popen(command, stdout=subprocess.PIPE, shell=True)
+		stdout, stderr = test.communicate()
+		if stderr:
+			print red("Error, check parameters")
+		else:
+			print stdout
+			
+			
+			
 
 	def pendate(self):
 		# Funzione che rileva la data per i log
@@ -121,8 +159,8 @@ class penmode:
 		return 'sudo proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'	
 
 	def nmap(self):
-		if self.p:
-			return 'sudo proxychains nmap ' + self.p + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+		if self.par:
+			return 'sudo proxychains nmap ' + self.par + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 		else:
 			return 'sudo proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 
