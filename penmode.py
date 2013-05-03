@@ -16,11 +16,11 @@
 
 
 
-############################# DISCALIMER ################################
-# Usage of this software for probing/attacking targets without prior #
-# mutual consent, is illegal. It's the end user's responsability to #
-# obey alla applicable local laws. Developers assume no liability and #
-# are not responible for any missue or damage caused by thi program #
+############################# DISCLAIMER ################################
+# Usage of this software for probing/attacking targets without prior
+# mutual consent, is illegal. It's the end user's responsability to
+# obey alla applicable local laws. Developers assume no liability and
+# are not responible for any missue or damage caused by thi program
 #########################################################################
 
 from pencore import *
