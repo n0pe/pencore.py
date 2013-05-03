@@ -46,7 +46,6 @@ def red(word):
 	return RED + word + END
 
 
-
 class penmode:
 	def __init__(self):
 		
@@ -77,8 +76,6 @@ class penmode:
 		
 	
 	def get_params(self):
-
-
 		parser = OptionParser()
 		
 		#Options
@@ -88,7 +85,6 @@ class penmode:
 		parser.add_option( "-g", "--gui", action="store_true", dest="gui", default=None, help="Start GUI interface" );
 		
 		(o,args) = parser.parse_args()
-		
 		
 		#Check for Target
 		if not o.target:
@@ -100,16 +96,13 @@ class penmode:
 			
 		#Check for parameters
 		if o.params and o.params != None:
-			print o.params
 			c = o.params.split(',')
 			for a in c:
 				self.par = ' '.join(c)
 			
-			
 		#Check for LogFile
 		elif o.output:
 			self.fl = o.output
-			
 			
 		#Check for GUI
 		elif o.gui:
@@ -122,11 +115,44 @@ class penmode:
 		if self.t[0:7] == "http://":
 			self.t = sys.argv[-1][7:]
 			
+		self.start_proxy()
 		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
-	def check_tools(self):
 		
-		#Check proxychains and socat
+	def check_tor(self):
+		#Tor is running?
+		stdout = Popen('ps aux | grep torrc | grep -v grep', shell=True, stdout=PIPE).stdout
+		stdout = str(stdout.read()).replace("b''",'')
+		if not stdout:
+			return 0
+		else:
+			return 1
+            
+	def check_socat(self):
+		#Socat is running?
+		stdout = Popen('(ps caux | grep socat)', shell=True, stdout=PIPE).stdout
+		stdout = str(stdout.read()).replace("b''",'')
+		if not stdout:
+			return 0
+		else:
+			return 1
+            
+	def start_proxy(self):
+		#Start Tor and Socat
+		if self.check_tor() == 0:
+			stdout, stderr = Popen('su-to-root -X -c /etc/init.d/tor start', shell=True, stdout=PIPE).communicate()
+			if stderr:
+				print red("Can't start proxy")
+				exit(1)
+		if self.check_socat() == 0:
+			stdout, stderr = Popen('su-to-root -X -c socat TCP4-LISTEN:8080,fork SOCKS4a:127.0.0.1:$ip,socksport=9050 &', shell=True, stdout=PIPE).communicate()
+			if stderr:
+				print red("Can't start proxy")
+				exit(1)
+
+        
+	def check_tools(self):
+		#Check Proxychains and Socat
 		if not os.path.exists('/usr/bin/proxychains') or not os.path.exists('/usr/bin/socat'):
 			print red("Please, install "+green("proxychains ")+red("and ")+green("socat."))
 			exit(1)
@@ -142,19 +168,16 @@ class penmode:
 		
 	#Run tools		
 	def run_command(self, command):
-		
 		test = Popen(command, stdout=subprocess.PIPE, shell=True)
 		stdout, stderr = test.communicate()
 		if stderr:
 			print red("Error, check parameters")
 		else:
 			print stdout
-			
-			
-			
 
+
+	#Take data for LogFile
 	def pendate(self):
-		# Funzione che rileva la data per i log
 		return datetime.datetime.now().strftime("-%m-%d-%Y_%H-%M")
 	
 	def sqlmap(self):
