@@ -26,7 +26,8 @@ from optparse import OptionParser, OptionGroup
 
 #Usage
 def usage():
-	print "\nUsage: ./penmode [tool] -p [parameters] -t [host]\n"
+	print "\nUsage: ./penmode.py [tool] -p [parameters] -t [host]\n"
+	print "Split parameters with comma, for example: \n\n ./penmode.py nmap -p -sS,-p80 -t 127.0.0.1\n"
 	exit(1)
 
 #Color 
@@ -92,6 +93,7 @@ class penmode:
 		#Check for Target
 		if not o.target:
 			print red("Specific target!")
+			usage()
 			exit(1)
 		else:
 			self.t = o.target
