@@ -31,6 +31,9 @@ m = globals()['penmode']()
 
 if m.dc.has_key(sys.argv[1]):
 	func = getattr(m, sys.argv[1])()
+	print func
 	m.run_command(func)
+else:
+	print red(sys.argv[1] + " is not installed")
 
 

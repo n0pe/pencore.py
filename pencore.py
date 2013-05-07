@@ -70,10 +70,6 @@ class penmode:
 		#Check tools
 		self.check_tools()
 		
-		
-		#IP del target da tor-resolve
-		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
-		
 	
 	def get_params(self):
 		parser = OptionParser()
@@ -109,14 +105,15 @@ class penmode:
 			#START GUI HERE
 			next
 		
+	
 	def settings(self):
 		
 		#Adjust target
 		if self.t[0:7] == "http://":
-			self.t = sys.argv[-1][7:]
+			self.t = self.t[-1][7:]
 			
+		t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		self.start_proxy()
-		self.ip = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
 		
 		
 	def check_tor(self):
@@ -145,7 +142,7 @@ class penmode:
 				print red("Can't start proxy")
 				exit(1)
 		if self.check_socat() == 0:
-			stdout, stderr = Popen('su-to-root -X -c socat TCP4-LISTEN:8080,fork SOCKS4a:127.0.0.1:$ip,socksport=9050 &', shell=True, stdout=PIPE).communicate()
+			stdout, stderr = Popen('su-to-root -X -c socat TCP4-LISTEN:8080,fork SOCKS4a:127.0.0.1:'+self.t+',socksport=9050 &', shell=True, stdout=PIPE).communicate()
 			if stderr:
 				print red("Can't start proxy")
 				exit(1)
@@ -158,7 +155,7 @@ class penmode:
 			exit(1)
 		
 		#Check the tools
-		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto']
+		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto', 'htexploit']
 		for i in tools:
 			needle = "/usr/bin/"+i
 			if os.path.exists(needle):
@@ -181,31 +178,49 @@ class penmode:
 		return datetime.datetime.now().strftime("-%m-%d-%Y_%H-%M")
 	
 	def sqlmap(self):
-		return 'sudo proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'	
+		if self.par:
+			return 'sudo proxychains sqlmap --url=' + self.t + ' ' + self.par + ' | tee ./' + self.t + self.pendate() + '.txt'
+		else:
+			return 'sudo proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'
 
 	def nmap(self):
 		if self.par:
-			return 'sudo proxychains nmap ' + self.par + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'sudo proxychains nmap -v ' + self.par + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 		else:
 			return 'sudo proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 
 	def whatweb(self):
-		return 'whatweb -v 127.0.0.1:8080 | tee ./nmap' + self.ip + self.pendate() + '.txt'
+		if self.par:
+			return 'whatweb -v ' + self.t + ' ' + self.par + ' | tee ./nmap' + t + self.pendate() + '.txt'
+		else:
+			return 'whatweb -v ' + self.t + ' | tee ./nmap' + self.t+ self.pendate() + '.txt'
 	
-	def slowloris(self,number,timeout):
-		return 'perl /opt/backbox/penmode/slowloris.pl -dns 127.0.0.1 -port 8080 -timeout '+str(timeout)+' -num '+str(number)
+	def slowloris(self):
+		if self.par:
+			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' ' + self.param
+		else:
+			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' -port 8080 -timeout 500 -num 500'
 		
-	def exploit(self):
-		return 'sudo proxychains htexploit -u' + self.ip + '-o -w --verbose 3'
+	def htexploit(self):
+		if self.par:
+			return 'sudo proxychains htexploit -u ' + self.t + ' ' + self.par
+		else:
+			return 'sudo proxychains htexploit -u ' + self.t + ' -o -w --verbose 3'
 		
 	def skipfish(self):
-		return 'sudo proxychains skipfish -o /home/' + self.ip + 'http.//' + self.ip
+		if self.par:
+			return 'sudo proxychains skipfish ' + self.par + ' ' + self.t
+		else:
+			return 'sudo proxychains skipfish -o ' + os.path.dirname(os.path.realpath(sys.argv[0]))+'/log/' + ' ' + self.t
 	
 	def wpscan(self):
-		return 'sudo proxychains wpscan --url' + self.ip + ' | tee ./wpscan' + self.pendate() + '.txt'
+		if self.par:
+			return 'sudo proxychains wpscan --url' + self.t + ' ' + self.par + ' | tee ./wpscan' + self.pendate() + '.txt'
+		else:
+			return 'sudo proxychains wpscan --url' + self.t + ' | tee ./wpscan' + self.pendate() + '.txt'
 		
 	def joomscan(self):
-		return 'joomscan -u' + self.ip + '-x 127.0.0.1:8080 | tee ./joomscan' + self.pendate() + '.txt'
+		return 'joomscan -u' + self.t + ' -x 127.0.0.1:8080 | tee ./joomscan' + self.pendate() + '.txt'
 		
 	def nikto(self):
 		return 'nikto -h 127.0.0.1:8080 | tee ./nikto' + self.pendate() + '.txt'
