@@ -26,8 +26,8 @@ from optparse import OptionParser, OptionGroup
 
 #Usage
 def usage():
-	print "\nUsage: ./penmode.py [tool] -p [parameters] -t [host]\n"
-	print "Split parameters with comma, for example: \n\n ./penmode.py nmap -p -sS,-p80 -t 127.0.0.1\n"
+	print ("\nUsage: ./penmode.py [tool] -p [parameters] -t [host]\n")
+	print ("Split parameters with comma, for example: \n\n ./penmode.py nmap -p -sS,-p80 -t 127.0.0.1\n")
 	exit(1)
 
 #Color 
@@ -84,7 +84,7 @@ class penmode:
 		
 		#Check for Target
 		if not o.target:
-			print red("Specific target!")
+			print (red("\nSpecific target!"))
 			usage()
 			exit(1)
 		else:
@@ -139,19 +139,19 @@ class penmode:
 		if self.check_tor() == 0:
 			stdout, stderr = Popen('su-to-root -X -c /etc/init.d/tor start', shell=True, stdout=PIPE).communicate()
 			if stderr:
-				print red("Can't start proxy")
+				print (red("Can't start proxy"))
 				exit(1)
 		if self.check_socat() == 0:
 			stdout, stderr = Popen('su-to-root -X -c socat TCP4-LISTEN:8080,fork SOCKS4a:127.0.0.1:'+self.t+',socksport=9050 &', shell=True, stdout=PIPE).communicate()
 			if stderr:
-				print red("Can't start proxy")
+				print (red("Can't start proxy"))
 				exit(1)
 
         
 	def check_tools(self):
 		#Check Proxychains and Socat
 		if not os.path.exists('/usr/bin/proxychains') or not os.path.exists('/usr/bin/socat'):
-			print red("Please, install "+green("proxychains ")+red("and ")+green("socat."))
+			print (red("Please, install "+green("proxychains ")+red("and ")+green("socat.")))
 			exit(1)
 		
 		#Check the tools
@@ -168,9 +168,9 @@ class penmode:
 		test = Popen(command, stdout=subprocess.PIPE, shell=True)
 		stdout, stderr = test.communicate()
 		if stderr:
-			print red("Error, check parameters")
+			print (red("Error, check parameters"))
 		else:
-			print stdout
+			print (stdout)
 
 
 	#Take data for LogFile
