@@ -23,6 +23,7 @@ import sys
 from subprocess import Popen, PIPE
 import subprocess
 from optparse import OptionParser, OptionGroup
+from gui import *
 
 #Usage
 def usage():
@@ -84,9 +85,10 @@ class penmode:
 		
 		#Check for Target
 		if not o.target:
-			print (red("\nSpecific target!"))
-			usage()
-			exit(1)
+			if not o.gui:
+				print (red("\nSpecific target!"))
+				usage()
+				exit(1)
 		else:
 			self.t = o.target
 			
@@ -102,8 +104,15 @@ class penmode:
 			
 		#Check for GUI
 		elif o.gui:
-			#START GUI HERE
-			next
+			self.start_gui()
+			
+			
+	def start_gui(self):
+		app = QApplication(sys.argv)
+		MainWindow_ = QMainWindow()
+		ui = MainWindow()
+		ui.setupUi(MainWindow_)
+		sys.exit(app.exec_())
 		
 	
 	def settings(self):
