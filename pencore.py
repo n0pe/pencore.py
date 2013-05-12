@@ -71,7 +71,7 @@ class penmode:
 		self.check_tools()
 		
 		#Is GUI?
-		self.gui = isgui
+		self.gui = 0
 	
 	def set_target(self,target):
 		self.t = target
