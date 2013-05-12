@@ -81,7 +81,6 @@ class penmode:
 		parser.add_option( "-t", "--target", action="store", dest="target", default=False, help="Target address." );
 		parser.add_option( "-p", "--params", action="store", dest="params", default=False, help="Additional parameters." );
 		parser.add_option( "-o", "--output", action="store", dest="output", default=None, help="Output file" );
-		parser.add_option( "-g", "--gui", action="store_true", dest="gui", default=None, help="Start GUI interface" );
 		
 		(o,args) = parser.parse_args()
 		
