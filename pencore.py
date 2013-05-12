@@ -70,7 +70,9 @@ class penmode:
 		
 		#Check tools
 		self.check_tools()
-		
+	
+	def set_target(self,target):
+		self.t = target
 	
 	def get_params(self):
 		parser = OptionParser()
@@ -105,15 +107,6 @@ class penmode:
 		#Check for GUI
 		elif o.gui:
 			self.start_gui()
-			
-			
-	def start_gui(self):
-		app = QApplication(sys.argv)
-		MainWindow_ = QMainWindow()
-		ui = MainWindow()
-		ui.setupUi(MainWindow_)
-		sys.exit(app.exec_())
-		
 	
 	def settings(self):
 		
