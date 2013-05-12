@@ -113,7 +113,8 @@ class penmode:
 		if self.t[0:7] == "http://":
 			self.t = self.t[-1][7:]
 			
-		self.t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
+		self.t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b'",'')
+		self.t = self.t[:-3]
 		self.start_proxy()
 		
 		
