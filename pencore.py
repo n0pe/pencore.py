@@ -62,16 +62,22 @@ class penmode:
 		self.par = None
 		
 		#Check for parameters
-		self.get_params()
+		#self.get_params()
 		
 		#Settings and configuration
 		self.settings()
 		
 		#Check tools
 		self.check_tools()
+		
+		#Is GUI?
+		self.gui = isgui
 	
 	def set_target(self,target):
 		self.t = target
+	
+	def set_gui(self,gui):
+		self.isgui = gui
 	
 	def get_params(self):
 		parser = OptionParser()
@@ -85,9 +91,10 @@ class penmode:
 		
 		#Check for Target
 		if not o.target:
-			print (red("\nSpecific target!"))
-			usage()
-			exit(1)
+			if self.isgui == 0:
+				print (red("\nSpecific target!"))
+				usage()
+				exit(1)
 		else:
 			self.t = o.target
 			
@@ -100,10 +107,6 @@ class penmode:
 		#Check for LogFile
 		elif o.output:
 			self.fl = o.output
-			
-		#Check for GUI
-		elif o.gui:
-			self.start_gui()
 	
 	def settings(self):
 		
