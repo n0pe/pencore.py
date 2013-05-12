@@ -23,7 +23,6 @@ import sys
 from subprocess import Popen, PIPE
 import subprocess
 from optparse import OptionParser, OptionGroup
-from gui import *
 
 #Usage
 def usage():
