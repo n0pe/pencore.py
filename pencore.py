@@ -64,9 +64,6 @@ class penmode:
 		#Check for parameters
 		#self.get_params()
 		
-		#Settings and configuration
-		self.settings()
-		
 		#Check tools
 		self.check_tools()
 		
@@ -75,6 +72,8 @@ class penmode:
 	
 	def set_target(self,target):
 		self.t = target
+		#Settings and configuration
+		self.settings()
 	
 	def set_gui(self,gui):
 		self.isgui = gui
