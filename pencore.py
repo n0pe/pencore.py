@@ -85,10 +85,9 @@ class penmode:
 		
 		#Check for Target
 		if not o.target:
-			if not o.gui:
-				print (red("\nSpecific target!"))
-				usage()
-				exit(1)
+			print (red("\nSpecific target!"))
+			usage()
+			exit(1)
 		else:
 			self.t = o.target
 			
