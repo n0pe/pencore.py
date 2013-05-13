@@ -26,6 +26,12 @@
 from pencore import *
 from optparse import OptionParser, OptionGroup
 import sys
+
+#Check for any tool in command line
+try:
+	sys.argv[1]
+except:
+	usage()
 	
 m = globals()['penmode']()
 

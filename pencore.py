@@ -26,7 +26,7 @@ from optparse import OptionParser, OptionGroup
 
 #Usage
 def usage():
-	print ("\nUsage: ./penmode.py [tool] -p [parameters] -t [host]\n")
+	print ("\nUsage: sudo ./penmode.py [tool] -p [parameters] -t [host]\n")
 	print ("Split parameters with comma, for example: \n\n ./penmode.py nmap -p -sS,-p80 -t 127.0.0.1\n")
 	exit(1)
 
@@ -109,8 +109,18 @@ class penmode:
 		#Check for LogFile
 		elif o.output:
 			self.fl = o.output
+			
+		def check_root():
+			if os.getuid() != 0:
+				return 0
+			else:
+				return 1
 	
 	def settings(self):
+		
+		if self.check_root() == 0:
+			print red("\nRun from root!\n")
+			return 0
 		
 		#Adjust target
 		if self.t[0:7] == "http://":
