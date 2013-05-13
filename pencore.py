@@ -74,6 +74,9 @@ class penmode:
 		self.t = target
 		#Settings and configuration
 		self.settings()
+		
+	def get_target(self):
+		return self.t
 	
 	def set_gui(self,gui):
 		self.isgui = gui
