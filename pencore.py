@@ -23,7 +23,6 @@ import sys
 from subprocess import Popen, PIPE
 import subprocess
 from optparse import OptionParser, OptionGroup
-from gui import *
 
 #Usage
 def usage():
@@ -63,14 +62,24 @@ class penmode:
 		self.par = None
 		
 		#Check for parameters
-		self.get_params()
-		
-		#Settings and configuration
-		self.settings()
+		#self.get_params()
 		
 		#Check tools
 		self.check_tools()
 		
+		#Is GUI?
+		self.gui = 0
+	
+	def set_target(self,target):
+		self.t = target
+		#Settings and configuration
+		self.settings()
+		
+	def get_target(self):
+		return self.t
+	
+	def set_gui(self,gui):
+		self.isgui = gui
 	
 	def get_params(self):
 		parser = OptionParser()
@@ -79,13 +88,12 @@ class penmode:
 		parser.add_option( "-t", "--target", action="store", dest="target", default=False, help="Target address." );
 		parser.add_option( "-p", "--params", action="store", dest="params", default=False, help="Additional parameters." );
 		parser.add_option( "-o", "--output", action="store", dest="output", default=None, help="Output file" );
-		parser.add_option( "-g", "--gui", action="store_true", dest="gui", default=None, help="Start GUI interface" );
 		
 		(o,args) = parser.parse_args()
 		
 		#Check for Target
 		if not o.target:
-			if not o.gui:
+			if self.isgui == 0:
 				print (red("\nSpecific target!"))
 				usage()
 				exit(1)
@@ -101,19 +109,6 @@ class penmode:
 		#Check for LogFile
 		elif o.output:
 			self.fl = o.output
-			
-		#Check for GUI
-		elif o.gui:
-			self.start_gui()
-			
-			
-	def start_gui(self):
-		app = QApplication(sys.argv)
-		MainWindow_ = QMainWindow()
-		ui = MainWindow()
-		ui.setupUi(MainWindow_)
-		sys.exit(app.exec_())
-		
 	
 	def settings(self):
 		
@@ -121,7 +116,8 @@ class penmode:
 		if self.t[0:7] == "http://":
 			self.t = self.t[-1][7:]
 			
-		self.t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b''",'')
+		self.t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b'",'')
+		self.t = self.t[:-3]
 		self.start_proxy()
 		
 		
