@@ -27,6 +27,13 @@ from pencore import *
 from optparse import OptionParser, OptionGroup
 import sys
 
+
+#Check if is root
+
+if check_root() == 0:
+	print red("\nRun from root!\n")
+	exit(1)
+
 #Check for any tool in command line
 try:
 	sys.argv[1]
@@ -34,8 +41,16 @@ except:
 	usage()
 	
 m = globals()['penmode']()
+m.get_params()
 
 if m.dc.has_key(sys.argv[1]):
+	
+	if m.check_tor() == 0:
+		m.start_tor()
+	
+	if m.check_socat() == 0:
+		m.start_tor()
+	
 	func = getattr(m, sys.argv[1])()
 	m.run_command(func)
 else:

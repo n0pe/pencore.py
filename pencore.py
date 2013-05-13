@@ -29,6 +29,12 @@ def usage():
 	print ("\nUsage: sudo ./penmode.py [tool] -p [parameters] -t [host]\n")
 	print ("Split parameters with comma, for example: \n\n ./penmode.py nmap -p -sS,-p80 -t 127.0.0.1\n")
 	exit(1)
+	
+def check_root():
+	if os.getuid() != 0:
+		return 0
+	else:
+		return 1
 
 #Color 
 GREEN = '\033[92m'
@@ -68,7 +74,7 @@ class penmode:
 		self.check_tools()
 		
 		#Is GUI?
-		self.gui = 0
+		self.isgui = 0
 	
 	def set_target(self,target):
 		self.t = target
@@ -110,17 +116,8 @@ class penmode:
 		elif o.output:
 			self.fl = o.output
 			
-		def check_root():
-			if os.getuid() != 0:
-				return 0
-			else:
-				return 1
 	
 	def settings(self):
-		
-		if self.check_root() == 0:
-			print red("\nRun from root!\n")
-			return 0
 		
 		#Adjust target
 		if self.t[0:7] == "http://":
@@ -149,18 +146,20 @@ class penmode:
 		else:
 			return 1
             
-	def start_proxy(self):
-		#Start Tor and Socat
-		if self.check_tor() == 0:
-			stdout, stderr = Popen('su-to-root -X -c /etc/init.d/tor start', shell=True, stdout=PIPE).communicate()
-			if stderr:
-				print (red("Can't start proxy"))
-				exit(1)
-		if self.check_socat() == 0:
-			stdout, stderr = Popen('su-to-root -X -c socat TCP4-LISTEN:8080,fork SOCKS4a:127.0.0.1:'+self.t+',socksport=9050 &', shell=True, stdout=PIPE).communicate()
-			if stderr:
-				print (red("Can't start proxy"))
-				exit(1)
+            
+	def start_tor(self):
+		stdout, stderr = Popen('/etc/init.d/tor start', shell=True, stdout=PIPE).communicate()
+		if stderr:
+			return 0
+		else:
+			return 1
+			
+	def start_socat(self):
+		stdout, stderr = Popen('socat TCP4-LISTEN:8080,fork SOCKS4a:127.0.0.1:'+self.t+',socksport=9050 &', shell=True, stdout=PIPE).communicate()
+		if stderr:
+			return 0
+		else:
+			return 1
 
         
 	def check_tools(self):
