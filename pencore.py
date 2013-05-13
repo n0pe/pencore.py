@@ -193,15 +193,15 @@ class penmode:
 	
 	def sqlmap(self):
 		if self.par:
-			return 'sudo proxychains sqlmap --url=' + self.t + ' ' + self.par + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains sqlmap --url=' + self.t + ' ' + self.par + ' | tee ./' + self.t + self.pendate() + '.txt'
 		else:
-			return 'sudo proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'
 
 	def nmap(self):
 		if self.par:
-			return 'sudo proxychains nmap -v ' + self.par + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains nmap -v ' + self.par + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 		else:
-			return 'sudo proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
 
 	def whatweb(self):
 		if self.par:
@@ -217,21 +217,21 @@ class penmode:
 		
 	def htexploit(self):
 		if self.par:
-			return 'sudo proxychains htexploit -u ' + self.t + ' ' + self.par
+			return 'sproxychains htexploit -u ' + self.t + ' ' + self.par
 		else:
-			return 'sudo proxychains htexploit -u ' + self.t + ' -o -w --verbose 3'
+			return 'proxychains htexploit -u ' + self.t + ' -o -w --verbose 3'
 		
 	def skipfish(self):
 		if self.par:
-			return 'sudo proxychains skipfish ' + self.par + ' ' + self.t
+			return 'proxychains skipfish ' + self.par + ' ' + self.t
 		else:
-			return 'sudo proxychains skipfish -o ' + os.path.dirname(os.path.realpath(sys.argv[0]))+'/log/' + ' ' + self.t
+			return 'proxychains skipfish -o ' + os.path.dirname(os.path.realpath(sys.argv[0]))+'/log/' + ' ' + self.t
 	
 	def wpscan(self):
 		if self.par:
-			return 'sudo proxychains wpscan --url' + self.t + ' ' + self.par + ' | tee ./wpscan' + self.pendate() + '.txt'
+			return 'proxychains wpscan --url' + self.t + ' ' + self.par + ' | tee ./wpscan' + self.pendate() + '.txt'
 		else:
-			return 'sudo proxychains wpscan --url' + self.t + ' | tee ./wpscan' + self.pendate() + '.txt'
+			return 'proxychains wpscan --url' + self.t + ' | tee ./wpscan' + self.pendate() + '.txt'
 		
 	def joomscan(self):
 		return 'joomscan -u' + self.t + ' -x 127.0.0.1:8080 | tee ./joomscan' + self.pendate() + '.txt'
