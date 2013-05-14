@@ -255,6 +255,6 @@ class penmode:
 		
 	def nikto(self):
 		if self.par:
-			return 'nikto ' + self.par + ' ' + self.t + self.log_string('joomscan')
+			return 'nikto ' + self.par + ' ' + '-h ' + self.t + self.log_string('joomscan')
 		else:
-			return 'nikto -h ' + self.t + self.t + self.log_string('joomscan')
+			return 'nikto -h ' + self.t + self.log_string('joomscan')
