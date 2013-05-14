@@ -225,30 +225,36 @@ class penmode:
 	
 	def slowloris(self):
 		if self.par:
-			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' ' + self.param + ' | tee ' + self.logdir + 'slowloris-' + self.t + '-' 
+			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' ' + self.par + self.log_string('slowloris')
 		else:
-			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' -port 8080 -timeout 500 -num 500'
+			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' -port 8080 -timeout 500 -num 500' + self.log_string('slowloris')
 		
 	def htexploit(self):
 		if self.par:
-			return 'sproxychains htexploit -u ' + self.t + ' ' + self.par
+			return 'sproxychains htexploit -u ' + self.t + ' ' + self.par + self.log_string('htexploit')
 		else:
-			return 'proxychains htexploit -u ' + self.t + ' -o -w --verbose 3'
+			return 'proxychains htexploit -u ' + self.t + ' -o -w --verbose 3' + self.log_string('htexploit')
 		
 	def skipfish(self):
 		if self.par:
 			return 'proxychains skipfish ' + self.par + ' ' + self.t
 		else:
-			return 'proxychains skipfish -o ' + os.path.dirname(os.path.realpath(sys.argv[0]))+'/log/' + ' ' + self.t
+			return 'proxychains skipfish -o ' + self.logdir + ' ' + self.t
 	
 	def wpscan(self):
 		if self.par:
-			return 'proxychains wpscan --url' + self.t + ' ' + self.par + ' | tee ./wpscan' + self.pendate() + '.txt'
+			return 'proxychains wpscan --url' + self.t + ' ' + self.par + self.log_string('wpscan')
 		else:
-			return 'proxychains wpscan --url' + self.t + ' | tee ./wpscan' + self.pendate() + '.txt'
+			return 'proxychains wpscan --url' + self.t + self.log_string('wpscan')
 		
 	def joomscan(self):
-		return 'joomscan -u' + self.t + ' -x 127.0.0.1:8080 | tee ./joomscan' + self.pendate() + '.txt'
+		if self.par:
+			return 'joomscan -u' + self.t + ' ' + self.par + self.log_string('joomscan')
+		else:
+			return 'joomscan -u' + self.t + self.log_string('joomscan')
 		
 	def nikto(self):
-		return 'nikto -h 127.0.0.1:8080 | tee ./nikto' + self.pendate() + '.txt'
+		if self.par:
+			return 'nikto ' + self.par + ' ' + self.t + self.log_string('joomscan')
+		else:
+			return 'nikto -h ' + self.t + self.t + self.log_string('joomscan')
