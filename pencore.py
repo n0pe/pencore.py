@@ -203,7 +203,7 @@ class penmode:
 		
 	def log_string(self,tool):
 		date = self.pendate()
-		return self.logdir + tool + '-' + self.t  + date + '.txt'
+		return ' | tee ' + self.logdir + tool + '-' + self.t  + date + '.txt'
 	
 	def sqlmap(self):
 		if self.par:
@@ -213,8 +213,7 @@ class penmode:
 
 	def nmap(self):
 		if self.par:
-			print "oi"
-			return 'proxychains nmap -v ' + self.par + ' ' + self.t + ' | tee ' + self.log_string('nmap')
+			return 'proxychains nmap -v ' + self.par + ' ' + self.t + self.log_string('nmap')
 		else:
 			return 'proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + self.log_string('nmap')
 
