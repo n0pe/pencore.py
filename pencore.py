@@ -55,20 +55,17 @@ def red(word):
 class penmode:
 	def __init__(self):
 		
+		#Log Dir
+		self.logdir = '/var/log/penmode/'
+		
 		#Target
 		self.t = None
-		
-		#Log file
-		self.lf = None
 		
 		#Dictionary (the tools)
 		self.dc = {}
 		
 		#Parameters
 		self.par = None
-		
-		#Check for parameters
-		#self.get_params()
 		
 		#Check tools
 		self.check_tools()
@@ -104,7 +101,7 @@ class penmode:
 				usage()
 				exit(1)
 		else:
-			self.t = o.target
+			self.set_target(o.target)
 			
 		#Check for parameters
 		if o.params and o.params != None:
@@ -116,18 +113,31 @@ class penmode:
 		elif o.output:
 			self.fl = o.output
 			
+			
+	#Check for Log Directory
+	def check_logdir(self):
+		if not os.path.exists(self.logdir):
+			try:
+				os.makedirs(self.logdir)
+				print green("Created " + self.logdir)
+			except OSError, e:
+				print e
+		else:
+			next
 	
 	def settings(self):
+		
+		self.check_logdir()
+		
 		
 		#Adjust target
 		if self.t[0:7] == "http://":
 			self.t = self.t[-1][7:]
 			
 		self.t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b'",'')
-		self.t = self.t[:-3]
-		self.start_proxy()
+		self.t = self.t.rstrip('\r\n')
 		
-		
+				
 	def check_tor(self):
 		#Tor is running?
 		stdout = Popen('ps aux | grep torrc | grep -v grep', shell=True, stdout=PIPE).stdout
@@ -182,7 +192,7 @@ class penmode:
 		test = Popen(command, stdout=subprocess.PIPE, shell=True)
 		stdout, stderr = test.communicate()
 		if stderr:
-			print (red("Error, check parameters"))
+			print (red(stderr))
 		else:
 			print (stdout)
 
@@ -190,28 +200,33 @@ class penmode:
 	#Take data for LogFile
 	def pendate(self):
 		return datetime.datetime.now().strftime("-%m-%d-%Y_%H-%M")
+		
+	def log_string(self,tool):
+		date = self.pendate()
+		return self.logdir + tool + '-' + self.t  + date + '.txt'
 	
 	def sqlmap(self):
 		if self.par:
-			return 'proxychains sqlmap --url=' + self.t + ' ' + self.par + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains sqlmap --url=' + self.t + ' ' + self.par + self.log_string('sqlmap')
 		else:
-			return 'proxychains sqlmap --wizard | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains sqlmap --wizard | tee ' + self.logdir + self.log_string('sqlmap')
 
 	def nmap(self):
 		if self.par:
-			return 'proxychains nmap -v ' + self.par + ' ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+			print "oi"
+			return 'proxychains nmap -v ' + self.par + ' ' + self.t + ' | tee ' + self.log_string('nmap')
 		else:
-			return 'proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + ' | tee ./' + self.t + self.pendate() + '.txt'
+			return 'proxychains nmap -sV -O -P0 -p 21,22,25,53,80,135,139,443,445 ' + self.t + self.log_string('nmap')
 
 	def whatweb(self):
 		if self.par:
-			return 'whatweb -v ' + self.t + ' ' + self.par + ' | tee ./nmap' + t + self.pendate() + '.txt'
+			return 'whatweb -v ' + self.t + ' ' + self.par + ' | tee log/nmap' + t + self.pendate() + '.txt'
 		else:
 			return 'whatweb -v ' + self.t + ' | tee ./nmap' + self.t+ self.pendate() + '.txt'
 	
 	def slowloris(self):
 		if self.par:
-			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' ' + self.param
+			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' ' + self.param + ' | tee ' + self.logdir + 'slowloris-' + self.t + '-' 
 		else:
 			return 'perl /opt/backbox/penmode/slowloris.pl -dns ' + self.t + ' -port 8080 -timeout 500 -num 500'
 		

@@ -52,6 +52,7 @@ if m.dc.has_key(sys.argv[1]):
 		m.start_tor()
 	
 	func = getattr(m, sys.argv[1])()
+	print func
 	m.run_command(func)
 else:
 	print (red(sys.argv[1] + " is not installed"))
