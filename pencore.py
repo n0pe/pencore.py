@@ -219,9 +219,9 @@ class penmode:
 
 	def whatweb(self):
 		if self.par:
-			return 'whatweb -v ' + self.t + ' ' + self.par + ' | tee log/nmap' + t + self.pendate() + '.txt'
+			return 'whatweb -v ' + self.t + ' ' + self.par + self.log_string('wpscan')
 		else:
-			return 'whatweb -v ' + self.t + ' | tee ./nmap' + self.t+ self.pendate() + '.txt'
+			return 'whatweb -v ' + self.t + self.log_string('wpscan')
 	
 	def slowloris(self):
 		if self.par:
@@ -243,9 +243,9 @@ class penmode:
 	
 	def wpscan(self):
 		if self.par:
-			return 'proxychains wpscan --url' + self.t + ' ' + self.par + self.log_string('wpscan')
+			return 'proxychains wpscan --url ' + self.t + ' ' + self.par + self.log_string('wpscan')
 		else:
-			return 'proxychains wpscan --url' + self.t + self.log_string('wpscan')
+			return 'proxychains wpscan --url ' + self.t + self.log_string('wpscan')
 		
 	def joomscan(self):
 		if self.par:
