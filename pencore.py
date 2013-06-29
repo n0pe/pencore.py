@@ -84,6 +84,10 @@ class penmode:
 	def set_gui(self,gui):
 		self.isgui = gui
 	
+	#For GUI Parameters
+	def set_params(params):
+		self.par = params
+		
 	def get_params(self):
 		parser = OptionParser()
 		
