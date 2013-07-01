@@ -123,9 +123,9 @@ class penmode:
 		if not os.path.exists(self.logdir):
 			try:
 				os.makedirs(self.logdir)
-				print green("Created " + self.logdir)
+				print (green("Created " + self.logdir))
 			except OSError, e:
-				print e
+				print (e)
 		else:
 			next
 	
