@@ -31,7 +31,7 @@ import sys
 #Check if is root
 
 if check_root() == 0:
-	print red("\nRun from root!\n")
+	print (red("\nRun from root!\n"))
 	exit(1)
 
 #Check for any tool in command line
