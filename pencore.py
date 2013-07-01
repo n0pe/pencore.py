@@ -124,7 +124,7 @@ class penmode:
 			try:
 				os.makedirs(self.logdir)
 				print (green("Created " + self.logdir))
-			except OSError, e:
+			except OSError as e:
 				print (e)
 		else:
 			next
