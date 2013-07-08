@@ -85,7 +85,7 @@ class penmode:
 		self.isgui = gui
 	
 	#For GUI Parameters
-	def set_params(params):
+	def set_params(self,params):
 		self.par = params
 		
 	def get_params(self):
