@@ -59,6 +59,7 @@ class penmode:
 		self.logdir = '/var/log/penmode/'
 		
 		#Target
+		self.url = None
 		self.t = None
 		
 		#Dictionary (the tools)
@@ -74,7 +75,7 @@ class penmode:
 		self.isgui = 0
 	
 	def set_target(self,target):
-		self.t = target
+		self.url = target
 		#Settings and configuration
 		self.settings()
 		
@@ -85,7 +86,7 @@ class penmode:
 		self.isgui = gui
 	
 	#For GUI Parameters
-	def set_params(params):
+	def set_params(self,params):
 		self.par = params
 		
 	def get_params(self):
@@ -123,9 +124,9 @@ class penmode:
 		if not os.path.exists(self.logdir):
 			try:
 				os.makedirs(self.logdir)
-				print green("Created " + self.logdir)
-			except OSError, e:
-				print e
+				print (green("Created " + self.logdir))
+			except OSError as e:
+				print (e)
 		else:
 			next
 	
@@ -135,11 +136,13 @@ class penmode:
 		
 		
 		#Adjust target
-		if self.t[0:7] == "http://":
-			self.t = self.t[-1][7:]
+		if self.url[0:7] == "http://":
+			self.url = self.url[-1][7:]
 			
-		self.t = str(Popen('tor-resolve '+self.t+' 127.0.0.1:9050', shell=True, stdout=PIPE).stdout.read()).replace("b'",'')
-		self.t = self.t.rstrip('\r\n')
+		p = subprocess.Popen('tor-resolve '+self.url+' 127.0.0.1:9050', shell=True, stdout=PIPE)
+		self.t, err = p.communicate()
+		self.t.rstrip('\r\n')
+		print "Oi " + self.t
 		
 				
 	def check_tor(self):
@@ -181,6 +184,10 @@ class penmode:
 		if not os.path.exists('/usr/bin/proxychains') or not os.path.exists('/usr/bin/socat'):
 			print (red("Please, install "+green("proxychains ")+red("and ")+green("socat.")))
 			exit(1)
+			
+		#Check tor-resolve
+		if not os.path.exists('/usr/bin/tor-resolve'):
+			print (red("Please, install "+green("tor-resolve")+""))
 		
 		#Check the tools
 		tools = ['nmap', 'whatweb', 'skipfish', 'wpscan', 'sqlmap', 'joomscan', 'nikto', 'htexploit']
