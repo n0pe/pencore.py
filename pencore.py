@@ -142,7 +142,6 @@ class penmode:
 		p = subprocess.Popen('tor-resolve '+self.url+' 127.0.0.1:9050', shell=True, stdout=PIPE)
 		self.t, err = p.communicate()
 		self.t.rstrip('\r\n')
-		print "Oi " + self.t
 		
 				
 	def check_tor(self):
